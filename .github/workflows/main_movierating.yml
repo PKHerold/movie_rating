@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read # This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -23,14 +23,14 @@ jobs:
       - name: Set Node.js memory limit
         run: echo "NODE_OPTIONS=--max-old-space-size=4096" >> $GITHUB_ENV
 
-      - name: npm install (production dependencies only)
-        run: npm install --production
+      - name: Install only necessary modules
+        run: |
+          npm install axios react react-dom react-router react-router-dom vite lowdb lucide-react dayjs json5 postcss esbuild rollup eslint eslint-plugin-react eslint-plugin-react-hooks eslint-plugin-react-refresh
 
-      - name: npm run build (if present)
-        run: npm run build --if-present
-
-      - name: npm run test (if present)
-        run: npm run test --if-present
+      - name: Build and test
+        run: |
+          npm run build --if-present
+          npm run test --if-present
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
